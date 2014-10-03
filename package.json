@@ -1,0 +1,24 @@
+{
+  "name": "ios-test-app",
+  "version": "1.0.0",
+  "description": "iOS app for testing",
+  "main": "index.js",
+  "scripts": {
+    "prepublish": "grunt default"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/appium/ios-test-app.git"
+  },
+  "keywords": [
+    "appium",
+    "ios",
+    "testapp"
+  ],
+  "author": "",
+  "homepage": "https://github.com/appium/ios-test-app",
+  "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-zip": "^0.16.0"
+  }
+}
