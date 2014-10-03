@@ -1,8 +1,8 @@
 {
   "name": "ios-test-app",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "iOS app for testing",
-  "main": "index.js",
+  "main": "TestApp.app.zip",
   "scripts": {
     "prepublish": "grunt default"
   },
