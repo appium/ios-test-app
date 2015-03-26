@@ -57,7 +57,7 @@
     secondArg.returnKeyType = UIReturnKeyDone;
     firstArg.delegate = self;
     secondArg.delegate = self;
-    [NSTimer scheduledTimerWithTimeInterval:0.1
+    [NSTimer scheduledTimerWithTimeInterval:0.2
                                      target:self
                                    selector:@selector(logLocationAuthFromTimer:)
                                    userInfo:nil
@@ -80,7 +80,7 @@
 - (void)logLocationAuth
 {
     CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
-    if (status == kCLAuthorizationStatusAuthorized) {
+    if (status != kCLAuthorizationStatusRestricted && status != kCLAuthorizationStatusDenied) {
         locationStatus.on = YES;
     } else {
         locationStatus.on = NO;
@@ -170,7 +170,7 @@
 
 - (IBAction)accessLocationAlert:(id)sender {
     CLLocationManager *locationManager = [[CLLocationManager alloc] init];
-    
+
     [locationManager startUpdatingLocation];
     [locationManager stopUpdatingLocation];
 }
