@@ -1,10 +1,10 @@
 {
   "name": "ios-test-app",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "iOS app for testing",
-  "main": "TestApp.app.zip",
+  "main": "apps.json",
   "scripts": {
-    "prepublish": "grunt default"
+    "install": "grunt default"
   },
   "repository": {
     "type": "git",
@@ -15,10 +15,14 @@
     "ios",
     "testapp"
   ],
+  "os": [
+    "darwin"
+  ],
   "author": "",
   "homepage": "https://github.com/appium/ios-test-app",
-  "devDependencies": {
+  "dependencies": {
+    "appium-xcode": "^2.0.2",
     "grunt": "^0.4.5",
-    "grunt-zip": "^0.16.0"
+    "q": "^1.3.0"
   }
 }

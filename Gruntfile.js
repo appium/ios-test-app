@@ -1,14 +1,14 @@
+var xcode = require('appium-xcode');
+var sdks = ['iphonesimulator', 'iphoneos'];
+var appPaths = require('.');
+var Q = require('q');
+var fs = require('fs');
+var renameFile = Q.denodeify(fs.rename);
+
 module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
-    zip: {
-      app: {
-        src: ['build/Release-iphonesimulator/TestApp.app/*'],
-        dest: 'TestApp.app.zip',
-        cwd: 'build/Release-iphonesimulator'
-      }
-    }
   });
 
   var MAX_BUFFER_SIZE = 524288;
@@ -52,9 +52,51 @@ module.exports = function(grunt) {
     });
   };
 
-  grunt.loadNpmTasks('grunt-zip');
+  var renameAll = function(done) {
+    var renamePromises = [
+      renameFile('build/Release-iphonesimulator/TestApp.app', 'build/Release-iphonesimultor/TestApp-iphonesimulator.app'),
+      renameFile('build/Release-iphoneos/TestApp.app', 'build/Release-iphoneos/TestApp-iphonesimulator.app')
+    ];
 
-  grunt.registerTask('build', 'build ios app', function(){ buildApp('.', 'iphonesimulator7.1', this.async()) } );
-  grunt.registerTask('clean', 'cleaning', function(){ cleanApp('.', 'iphonesimulator7.1', this.async()) } );
-  grunt.registerTask('default', ['clean', 'build', 'zip']);
+    Q.all(
+    renamePromises,
+    function () {
+      grunt.log.write("finished renaming apps");
+      done();
+    },
+    function (e) {
+      grunt.log.error("could not rename apps");
+      done(e);
+    });
+  }
+
+
+  grunt.registerTask('build', 'build ios app', function(sdk) { buildApp('.', sdk, this.async()) } );
+  grunt.registerTask('clean', 'cleaning', function(sdk) { cleanApp('.', sdk, this.async()) } );
+  grunt.registerTask('renameAll', 'renaming apps', function(path){ renameAll(this.async()) } );
+  grunt.registerTask('cleanAll', 'cleaning', function() {
+    var done = this.async();
+    xcode.getMaxIOSSDK().then(function(sdkVer) {
+
+      sdks.forEach(function (sdk) {
+        sdk = sdk+sdkVer;
+        grunt.task.run('clean:'+sdk);
+      });
+      done();
+    });
+  });
+
+  grunt.registerTask('buildAll', 'building', function() {
+    var done = this.async();
+    xcode.getMaxIOSSDK().then(function(sdkVer) {
+
+      sdks.forEach(function (sdk) {
+        sdk = sdk+sdkVer;
+        grunt.task.run('build:'+sdk);
+      });
+      done();
+    });
+  });
+
+  grunt.registerTask('default', ['cleanAll', 'buildAll', 'renameAll']);
 }
