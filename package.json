@@ -1,6 +1,6 @@
 {
   "name": "ios-test-app",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "iOS app for testing",
   "main": "apps.json",
   "scripts": {

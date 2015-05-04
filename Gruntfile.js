@@ -54,7 +54,7 @@ module.exports = function(grunt) {
 
   var renameAll = function(done) {
     var renamePromises = [
-      renameFile('build/Release-iphonesimulator/TestApp.app', 'build/Release-iphonesimultor/TestApp-iphonesimulator.app'),
+      renameFile('build/Release-iphonesimulator/TestApp.app', 'build/Release-iphonesimulator/TestApp-iphonesimulator.app'),
       renameFile('build/Release-iphoneos/TestApp.app', 'build/Release-iphoneos/TestApp-iphoneos.app')
     ];
 
