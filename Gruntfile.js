@@ -44,7 +44,8 @@ module.exports = function(grunt) {
     xcode.on('exit', function (code) {
       if (code != 0) {
         grunt.log.error("Failed building app");
-        grunt.warn(output);
+        grunt.log.warn(output); // TODO: better error handling
+        done();
       } else {
         grunt.log.write('done building ios app for sdk', sdk);
         done();
