@@ -1,4 +1,16 @@
-iOS TestApp for appium
+ios-test-app
+===================
 
-run `npm install` and run `grunt default` to build.
-Build happend automatically when you try to `npm publish`
+Work in progress, stay tuned!
+
+## Watch
+
+```
+npm run watch
+```
+
+## Test
+
+```
+npm test
+```
