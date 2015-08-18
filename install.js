@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
-var install = require('./build-js/lib/install');
-var B = require('bluebird');
+// transpile:main
+
+import install from './lib/install';
+import B from 'bluebird';
 
 B.resolve(install()).done();
