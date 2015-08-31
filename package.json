@@ -22,7 +22,7 @@
   "os": [
     "darwin"
   ],
-  "main": "apps.json",
+  "main": "build-js/index.js",
   "bin": {},
   "directories": {
     "lib": "lib"
