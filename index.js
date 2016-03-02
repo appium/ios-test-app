@@ -1,4 +1,6 @@
 import path from 'path';
+import { install, installRealDevice } from './lib/install';
+
 
 let rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
 
@@ -8,11 +10,9 @@ let relative = {
 };
 
 let absolute = {
-  'iphoneos': path.resolve(rootDir, 'build/Release-iphoneos/TestApp-iphoneos.app'),
-  'iphonesimulator': path.resolve(rootDir, 'build/Release-iphonesimulator/TestApp-iphonesimulator.app')
+  'iphoneos': path.resolve(rootDir, 'build', 'Release-iphoneos', 'TestApp-iphoneos.app'),
+  'iphonesimulator': path.resolve(rootDir, 'build', 'Release-iphonesimulator', 'TestApp-iphonesimulator.app')
 };
-
-export {relative, absolute};
 
 // default export is relative app for backward compaibility
 let appList = [
@@ -21,3 +21,4 @@ let appList = [
 ];
 
 export default appList;
+export { relative, absolute, appList, install, installRealDevice };
