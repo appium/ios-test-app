@@ -3,6 +3,9 @@
 // transpile:main
 
 import install from './lib/install';
-import B from 'bluebird';
+import { asyncify } from 'asyncbox';
 
-B.resolve(install()).done();
+
+if (require.main === module) {
+  asyncify(install);
+}
