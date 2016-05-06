@@ -1,51 +1,148 @@
-#!/usr/bin/env node
+'use strict';
 
-var fs = require('fs')
-  , path = require('path');
+var xcode = require('appium-xcode'),
+    fs = require('fs'),
+    path = require('path'),
+    gutil = require('gulp-util'),
+    asyncUtil = require('async'),
+    rimraf = require('rimraf'),
+    exec = require('child_process').exec;
 
 
-function waitForDeps (cb) {
-  // see if we can import the necessary code
-  // try it a ridiculous (but finite) number of times
-  var i = 0;
-  function check () {
-    i++;
-    try {
-      require('./build-js/lib/install');
-      cb();
-    } catch (err) {
-      if (err.message.indexOf("Cannot find module './build-js/lib/install'") !== -1) {
-        console.warn('Project does not appear to built yet. Please run `gulp transpile` first.');
-        return cb('Could not install module: ' + err);
-      }
-      console.warn('Error trying to install ios-test-app. Waiting and trying again.', err.message);
-      if (i <= 200) {
-        setTimeout(check, 1000);
-      } else {
-        cb('Could not install module: ' + err);
-      }
-    }
+var rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..', '..');
+
+var relative = {
+  iphoneos: 'build/Release-iphoneos/TestApp-iphoneos.app',
+  iphonesimulator: 'build/Release-iphonesimulator/TestApp-iphonesimulator.app'
+};
+
+var absolute = {
+  iphoneos: path.resolve(rootDir, 'build', 'Release-iphoneos', 'TestApp-iphoneos.app'),
+  iphonesimulator: path.resolve(rootDir, 'build', 'Release-iphonesimulator', 'TestApp-iphonesimulator.app')
+};
+
+var appList = [
+  relative.iphoneos,
+  relative.iphonesimulator
+];
+
+var SDKS = {
+  iphonesimulator: {
+    name: 'iphonesimulator',
+    buildPath: path.resolve('build', 'Release-iphonesimulator', 'TestApp.app'),
+    finalPath: relative.iphonesimulator
+  },
+  iphoneos: {
+    name: 'iphoneos',
+    buildPath: path.resolve('build', 'Release-iphoneos', 'TestApp.app'),
+    finalPath: relative.iphoneos
   }
-  check();
+};
+
+// the sdks against which we will build
+var sdks = ['iphonesimulator'];
+if (process.env.IOS_REAL_DEVICE || process.env.REAL_DEVICE) {
+  sdks.push('iphoneos');
 }
 
-if (require.main === module) {
-  // check if cur dir exists
-  var installScript = path.resolve(__dirname, 'build-js', 'lib', 'install.js');
-  waitForDeps(function (err) {
+var MAX_BUFFER_SIZE = 524288;
+
+function cleanApp (appRoot, sdk, done) {
+  gutil.log('cleaning app for ' + sdk);
+  var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
+  exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
     if (err) {
-      console.warn("Unable to import install script. Re-run `install ios-test-app` manually.");
-      process.exit(1);
+      gutil.log("Failed cleaning app");
+      gutil.log(stderr);
+      done(err);
+    } else {
+      gutil.log('finished cleaning app for ' + sdk);
+      done();
     }
-    fs.stat(installScript, function (err) {
-      if (err) {
-        console.warn("NOTE: Run 'gulp transpile' before using");
-        return;
-      }
-      require('./build-js/lib/install').install().catch(function (err) {
-        console.error(err.stack ? err.stack : err);
-        process.exit(1);
-      });
-    });
   });
 }
+
+function cleanAll (done) {
+  gutil.log("cleaning apps");
+  xcode.getMaxIOSSDK()
+    .then(function (sdkVer) {
+      asyncUtil.eachSeries(sdks, function (sdk, cb) {
+        cleanApp('.', sdk + sdkVer, cb);
+      }, function (err) {
+        if (err) return done(err);
+        asyncUtil.eachSeries([
+          SDKS.iphonesimulator.buildPath,
+          SDKS.iphonesimulator.finalPath,
+          SDKS.iphoneos.buildPath,
+          SDKS.iphoneos.finalPath
+        ], rimraf, function (err) {
+          if (err) return done(err);
+          gutil.log("finished cleaning apps");
+          done();
+        });
+      });
+    });
+}
+
+function buildApp (appRoot, sdk, done) {
+  gutil.log('building app for ' + sdk);
+  var cmd = 'xcodebuild -sdk ' + sdk;
+  exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
+    if (err) {
+      gutil.log("Failed building app");
+      gutil.log(stderr);
+      done(err);
+    } else {
+      gutil.log('finished building app for ' + sdk);
+      done();
+    }
+  });
+}
+
+function buildAll (done) {
+  gutil.log('building apps');
+  xcode.getMaxIOSSDK()
+    .then(function (sdkVer) {
+      asyncUtil.eachSeries(sdks, function (sdk, cb) {
+        buildApp('.', sdk + sdkVer, cb);
+      }, function (err) {
+        if (err) return done(err);
+        gutil.log('finished building apps');
+        done();
+      });
+    });
+ }
+
+function renameAll (done) {
+  gutil.log('renaming apps');
+  asyncUtil.eachSeries(sdks, function (sdk, cb) {
+    gutil.log('renaming for ' + sdk);
+    fs.rename(SDKS[sdk].buildPath, SDKS[sdk].finalPath, cb);
+  }, function (err) {
+    if (err) return done(err);
+    gutil.log('finished renaming apps');
+    done();
+  });
+}
+
+exports.install = function install (done) {
+  asyncUtil.series([
+    cleanAll,
+    buildAll,
+    renameAll,
+    function () {
+      done();
+    }
+  ]);
+};
+
+exports.installRealDevice = function installRealDevice (done) {
+  sdks = ['iphoneos'];
+  exports.install(function () {
+    done(SDKS.iphoneos.finalPath);
+  });
+};
+
+exports.relative = relative;
+exports.absolute = absolute;
+exports.appList = appList;
