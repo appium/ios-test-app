@@ -28,6 +28,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "appium-gulp-plugins": "^1.4.3",
     "appium-logger": "^2.1.0",
     "appium-support": "^2.0.10",
     "appium-xcode": "^3.1.0",
@@ -47,7 +48,5 @@
     "test": "./node_modules/.bin/gulp once",
     "watch": "./node_modules/.bin/gulp"
   },
-  "devDependencies": {
-    "appium-gulp-plugins": "^1.4.3"
-  }
+  "devDependencies": {}
 }
