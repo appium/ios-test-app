@@ -1,4 +1,4 @@
-import { relative, absolute, appList, install, installRealDevice } from './lib/install';
+import { relative, absolute, appList, install, installRealDevice } from './install-npm';
 
 
 export default appList;
