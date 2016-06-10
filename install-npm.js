@@ -9,7 +9,7 @@ var xcode = require('appium-xcode'),
     exec = require('child_process').exec;
 
 
-var rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..', '..');
+var rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
 
 var relative = {
   iphoneos: 'build/Release-iphoneos/TestApp-iphoneos.app',
