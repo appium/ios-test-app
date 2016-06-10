@@ -131,7 +131,9 @@ exports.install = function install (done) {
     buildAll,
     renameAll,
     function () {
-      done();
+      if (typeof done === 'function') {
+        done();
+      }
     }
   ]);
 };
@@ -146,3 +148,9 @@ exports.installRealDevice = function installRealDevice (done) {
 exports.relative = relative;
 exports.absolute = absolute;
 exports.appList = appList;
+
+if (require.main === module) {
+  exports.install(function () {
+    console.log('finished installing');
+  });
+}
