@@ -28,8 +28,7 @@
     "lib": "lib"
   },
   "dependencies": {
-    "appium-logger": "^2.1.0",
-    "appium-support": "^2.0.10",
+    "appium-support": "^2.5.0",
     "appium-xcode": "^2.0.2",
     "async": "^2.0.0-rc.4",
     "asyncbox": "^2.3.1",
