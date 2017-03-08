@@ -20,6 +20,7 @@
 		3647AE2315CA0082006F70D6 /* TA2AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 3647AE2215CA0082006F70D6 /* TA2AppDelegate.m */; };
 		3647AE2C15CA00D5006F70D6 /* MyViewControllerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */; };
 		36FEEFEE1656DD6000100C04 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 36FEEFED1656DD6000100C04 /* Default-568h@2x.png */; };
+		8A7C969E1E6F8E38006281C9 /* EventKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8A7C969D1E6F8E38006281C9 /* EventKit.framework */; };
 		ABB96E8E192ECF150022BE43 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = ABB96E8C192ECF150022BE43 /* Localizable.strings */; };
 		EA040B6118D3DF5E00AC02D8 /* AddressBook.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */; };
 /* End PBXBuildFile section */
@@ -44,6 +45,7 @@
 		3647AE2915CA00D5006F70D6 /* MyViewControllerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MyViewControllerViewController.h; sourceTree = "<group>"; };
 		3647AE2A15CA00D5006F70D6 /* MyViewControllerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MyViewControllerViewController.m; sourceTree = "<group>"; };
 		36FEEFED1656DD6000100C04 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-568h@2x.png"; sourceTree = "<group>"; };
+		8A7C969D1E6F8E38006281C9 /* EventKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = EventKit.framework; path = System/Library/Frameworks/EventKit.framework; sourceTree = SDKROOT; };
 		ABB96E8D192ECF150022BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AddressBook.framework; path = System/Library/Frameworks/AddressBook.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -53,6 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8A7C969E1E6F8E38006281C9 /* EventKit.framework in Frameworks */,
 				EA040B6118D3DF5E00AC02D8 /* AddressBook.framework in Frameworks */,
 				1BB2B952189053DC00D0591D /* CoreLocation.framework in Frameworks */,
 				255BAFEF1790249F00DE7158 /* MapKit.framework in Frameworks */,
@@ -87,6 +90,7 @@
 		3647AE1115CA0082006F70D6 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				8A7C969D1E6F8E38006281C9 /* EventKit.framework */,
 				EA040B6018D3DF5E00AC02D8 /* AddressBook.framework */,
 				1BB2B951189053DC00D0591D /* CoreLocation.framework */,
 				3647AE1215CA0082006F70D6 /* UIKit.framework */,
@@ -282,10 +286,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Test App 2/TestApp-Prefix.pch";
 				INFOPLIST_FILE = "Test App 2/TestApp-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.appium.TestApp;
 				PRODUCT_NAME = TestApp;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
@@ -296,11 +302,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "Test App 2/TestApp-Prefix.pch";
 				INFOPLIST_FILE = "Test App 2/TestApp-Info.plist";
 				INSTALL_PATH = "${LOCAL_APPS_DIR}";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.1;
+				PRODUCT_BUNDLE_IDENTIFIER = io.appium.TestApp;
 				PRODUCT_NAME = TestApp;
 				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
