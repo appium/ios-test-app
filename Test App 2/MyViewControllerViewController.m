@@ -20,6 +20,7 @@
  */
 
 #import "MyViewControllerViewController.h"
+#import <EventKit/EventKit.h>
 #import <AddressBook/AddressBook.h>
 #import <CoreLocation/CoreLocation.h>
 
@@ -35,6 +36,7 @@
 @synthesize locationMgr;
 @synthesize locationStatus;
 
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -47,6 +49,24 @@
     }
 
     return self;
+}
+
+- (IBAction)checkCalendarAuthorized:(id)sender {
+    EKAuthorizationStatus status = [EKEventStore authorizationStatusForEntityType:(EKEntityTypeEvent)];
+    NSString *authorizationStatus;
+    if (status == EKAuthorizationStatusAuthorized) {
+        authorizationStatus = @"authorized";
+    } else {
+        authorizationStatus = @"not authorized";
+    }
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Calendar Authorization Status"
+                                                    message:authorizationStatus
+                                                   delegate:nil
+                                          cancelButtonTitle:@"Cancel"
+                                          otherButtonTitles:@"OK", nil];
+    [alert show];
+    [alert release];
+
 }
 
 - (void)viewDidLoad
