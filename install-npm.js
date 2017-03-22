@@ -65,6 +65,9 @@ function cleanApp (appRoot, sdk, done) {
 function cleanAll (done) {
   gutil.log("cleaning apps");
   xcode.getMaxIOSSDK()
+    .catch(function (err) {
+      gutil.log("Unable to get max iOS SDK:", err.message);
+    })
     .then(function (sdkVer) {
       asyncUtil.eachSeries(sdks, function (sdk, cb) {
         cleanApp('.', sdk + sdkVer, cb);
