@@ -6,6 +6,5 @@ osx_image: xcode8.2
 node_js:
   - "7"
   - "6"
-  - "4"
 script:
   - npm install
