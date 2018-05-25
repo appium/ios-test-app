@@ -1,5 +1,7 @@
 ## ios-test-app
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/appium/ios-test-app.svg)](https://greenkeeper.io/)
+
 A simple test application for iOS, used by [Appium](https://github.com/appium/appium) for certain tests.
 
 ### Building
