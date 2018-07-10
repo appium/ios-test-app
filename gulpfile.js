@@ -1,8 +1,8 @@
 "use strict";
 
-var gulp = require('gulp'),
-    boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp),
-    install = require('./install-npm').install;
+const gulp = require('gulp');
+const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
+const install = require('./install-npm').install;
 
 boilerplate({
   transpileOut: 'build-js',
