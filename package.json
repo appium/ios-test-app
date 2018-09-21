@@ -34,19 +34,20 @@
     "asyncbox": "^2.3.1",
     "babel-runtime": "=5.8.24",
     "bluebird": "^3.5.1",
-    "gulp": "^3.9.1",
-    "gulp-util": "^3.0.7",
     "rimraf": "^2.5.2",
     "source-map-support": "^0.5.6",
     "teen_process": "^1.5.1"
   },
   "scripts": {
+    "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
     "prepublish": "./node_modules/.bin/gulp prepublish",
     "install": "node install-npm.js",
     "test": "./node_modules/.bin/gulp once",
     "watch": "./node_modules/.bin/gulp"
   },
   "devDependencies": {
-    "appium-gulp-plugins": "^2.0.0"
+    "appium-gulp-plugins": "^2.0.0",
+    "gulp": "^3.9.1",
+    "gulp-util": "^3.0.7"
   }
 }
