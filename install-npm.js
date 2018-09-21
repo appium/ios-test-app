@@ -3,7 +3,7 @@
 var xcode = require('appium-xcode'),
     fs = require('fs'),
     path = require('path'),
-    gutil = require('gulp-util'),
+    log = require('fancy-log'),
     asyncUtil = require('async'),
     rimraf = require('rimraf'),
     exec = require('child_process').exec;
@@ -48,25 +48,25 @@ if (process.env.IOS_REAL_DEVICE || process.env.REAL_DEVICE) {
 var MAX_BUFFER_SIZE = 524288;
 
 function cleanApp (appRoot, sdk, done) {
-  gutil.log('cleaning app for ' + sdk);
+  log('cleaning app for ' + sdk);
   var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
   exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
     if (err) {
-      gutil.log("Failed cleaning app");
-      gutil.log(stderr);
+      log("Failed cleaning app: " + err);
+      log(stderr);
       done(err);
     } else {
-      gutil.log('finished cleaning app for ' + sdk);
+      log('finished cleaning app for ' + sdk);
       done();
     }
   });
 }
 
 function cleanAll (done) {
-  gutil.log("cleaning apps");
+  log("cleaning apps");
   xcode.getMaxIOSSDK()
     .catch(function (err) {
-      gutil.log("Unable to get max iOS SDK:", err.message);
+      log("Unable to get max iOS SDK:", err.message);
     })
     .then(function (sdkVer) {
       asyncUtil.eachSeries(sdks, function (sdk, cb) {
@@ -80,7 +80,7 @@ function cleanAll (done) {
           SDKS.iphoneos.finalPath
         ], rimraf, function (err) {
           if (err) return done(err);
-          gutil.log("finished cleaning apps");
+          log("finished cleaning apps");
           done();
         });
       });
@@ -88,42 +88,42 @@ function cleanAll (done) {
 }
 
 function buildApp (appRoot, sdk, done) {
-  gutil.log('building app for ' + sdk);
+  log('building app for ' + sdk);
   var cmd = 'xcodebuild -sdk ' + sdk;
   exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
     if (err) {
-      gutil.log("Failed building app");
-      gutil.log(stderr);
+      log("Failed building app");
+      log(stderr);
       done(err);
     } else {
-      gutil.log('finished building app for ' + sdk);
+      log('finished building app for ' + sdk);
       done();
     }
   });
 }
 
 function buildAll (done) {
-  gutil.log('building apps');
+  log('building apps');
   xcode.getMaxIOSSDK()
     .then(function (sdkVer) {
       asyncUtil.eachSeries(sdks, function (sdk, cb) {
         buildApp('.', sdk + sdkVer, cb);
       }, function (err) {
         if (err) return done(err);
-        gutil.log('finished building apps');
+        log('finished building apps');
         done();
       });
     });
  }
 
 function renameAll (done) {
-  gutil.log('renaming apps');
+  log('renaming apps');
   asyncUtil.eachSeries(sdks, function (sdk, cb) {
-    gutil.log('renaming for ' + sdk);
+    log('renaming for ' + sdk);
     fs.rename(SDKS[sdk].buildPath, SDKS[sdk].finalPath, cb);
   }, function (err) {
     if (err) return done(err);
-    gutil.log('finished renaming apps');
+    log('finished renaming apps');
     done();
   });
 }
