@@ -1,6 +1,6 @@
 'use strict';
 
-var xcode = require('appium-xcode'),
+var xcode = require('appium-xcode').default,
     fs = require('fs'),
     path = require('path'),
     log = require('fancy-log'),
