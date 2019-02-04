@@ -44,11 +44,18 @@
     "prepublish": "./node_modules/.bin/gulp prepublish",
     "install": "node install-npm.js",
     "test": "./node_modules/.bin/gulp once",
-    "watch": "./node_modules/.bin/gulp"
+    "watch": "./node_modules/.bin/gulp",
+    "lint": "gulp eslint",
+    "lint:fix": "gulp eslint --fix"
   },
   "devDependencies": {
     "ajv": "^6.5.3",
     "appium-gulp-plugins": "^3.0.0",
+    "eslint": "^5.2.0",
+    "eslint-config-appium": "^4.0.1",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-mocha": "^5.0.0",
+    "eslint-plugin-promise": "^4.0.0",
     "gulp": "^4.0.0"
   }
 }

@@ -1,0 +1,8 @@
+{
+  "extends": "appium",
+  "rules": {
+    "promise/prefer-await-to-callbacks": 0,
+    "promise/prefer-await-to-then": 0,
+    "promise/catch-or-return": 0,
+  }
+}

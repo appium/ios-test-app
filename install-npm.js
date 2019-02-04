@@ -1,32 +1,32 @@
 'use strict';
 
-var xcode = require('appium-xcode').default,
-    fs = require('fs'),
-    path = require('path'),
-    log = require('fancy-log'),
-    asyncUtil = require('async'),
-    rimraf = require('rimraf'),
-    exec = require('child_process').exec;
+const xcode = require('appium-xcode');
+const fs = require('fs');
+const path = require('path');
+const log = require('fancy-log');
+const asyncUtil = require('async');
+const rimraf = require('rimraf');
+const { exec } = require('child_process');
 
 
-var rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
+const rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
 
-var relative = {
+const relative = {
   iphoneos: 'build/Release-iphoneos/TestApp-iphoneos.app',
   iphonesimulator: 'build/Release-iphonesimulator/TestApp-iphonesimulator.app'
 };
 
-var absolute = {
+const absolute = {
   iphoneos: path.resolve(rootDir, 'build', 'Release-iphoneos', 'TestApp-iphoneos.app'),
   iphonesimulator: path.resolve(rootDir, 'build', 'Release-iphonesimulator', 'TestApp-iphonesimulator.app')
 };
 
-var appList = [
+const appList = [
   relative.iphoneos,
   relative.iphonesimulator
 ];
 
-var SDKS = {
+const SDKS = {
   iphonesimulator: {
     name: 'iphonesimulator',
     buildPath: path.resolve('build', 'Release-iphonesimulator', 'TestApp.app'),
@@ -40,47 +40,51 @@ var SDKS = {
 };
 
 // the sdks against which we will build
-var sdks = ['iphonesimulator'];
+let sdks = ['iphonesimulator'];
 if (process.env.IOS_REAL_DEVICE || process.env.REAL_DEVICE) {
   sdks.push('iphoneos');
 }
 
-var MAX_BUFFER_SIZE = 524288;
+const MAX_BUFFER_SIZE = 524288;
 
 function cleanApp (appRoot, sdk, done) {
-  log('cleaning app for ' + sdk);
-  var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
+  log(`Cleaning app for ${sdk}`);
+  const cmd = `xcodebuild -sdk ${sdk} clean`;
   exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
     if (err) {
-      log("Failed cleaning app: " + err);
+      log(`Failed cleaning app: ${err.message}`);
       log(stderr);
       done(err);
     } else {
-      log('finished cleaning app for ' + sdk);
+      log(`Finished cleaning app for ${sdk}`);
       done();
     }
   });
 }
 
 function cleanAll (done) {
-  log("cleaning apps");
+  log('Cleaning apps');
   xcode.getMaxIOSSDK()
     .catch(function (err) {
-      log("Unable to get max iOS SDK:", err.message);
+      log(`Unable to get max iOS SDK: ${err.message}`);
     })
     .then(function (sdkVer) {
       asyncUtil.eachSeries(sdks, function (sdk, cb) {
         cleanApp('.', sdk + sdkVer, cb);
       }, function (err) {
-        if (err) return done(err);
+        if (err) {
+          return done(err);
+        }
         asyncUtil.eachSeries([
           SDKS.iphonesimulator.buildPath,
           SDKS.iphonesimulator.finalPath,
           SDKS.iphoneos.buildPath,
           SDKS.iphoneos.finalPath
         ], rimraf, function (err) {
-          if (err) return done(err);
-          log("finished cleaning apps");
+          if (err) {
+            return done(err);
+          }
+          log('Finished cleaning apps');
           done();
         });
       });
@@ -88,42 +92,46 @@ function cleanAll (done) {
 }
 
 function buildApp (appRoot, sdk, done) {
-  log('building app for ' + sdk);
-  var cmd = 'xcodebuild -sdk ' + sdk;
+  log(`Building app for ${sdk}`);
+  const cmd = `xcodebuild -sdk ${sdk}`;
   exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
     if (err) {
-      log("Failed building app");
+      log(`Failed building app: ${err.message}`);
       log(stderr);
       done(err);
     } else {
-      log('finished building app for ' + sdk);
+      log(`Finished building app for ${sdk}`);
       done();
     }
   });
 }
 
 function buildAll (done) {
-  log('building apps');
+  log('Building apps');
   xcode.getMaxIOSSDK()
     .then(function (sdkVer) {
       asyncUtil.eachSeries(sdks, function (sdk, cb) {
         buildApp('.', sdk + sdkVer, cb);
       }, function (err) {
-        if (err) return done(err);
-        log('finished building apps');
+        if (err) {
+          return done(err);
+        }
+        log('Finished building apps');
         done();
       });
     });
- }
+}
 
 function renameAll (done) {
-  log('renaming apps');
+  log('Renaming apps');
   asyncUtil.eachSeries(sdks, function (sdk, cb) {
-    log('renaming for ' + sdk);
+    log(`Renaming for ${sdk}`);
     fs.rename(SDKS[sdk].buildPath, SDKS[sdk].finalPath, cb);
   }, function (err) {
-    if (err) return done(err);
-    log('finished renaming apps');
+    if (err) {
+      return done(err);
+    }
+    log('Finished renaming apps');
     done();
   });
 }
@@ -154,6 +162,6 @@ exports.appList = appList;
 
 if (require.main === module) {
   exports.install(function () {
-    console.log('finished installing');
+    log('Finished installing');
   });
 }
