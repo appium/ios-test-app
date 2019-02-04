@@ -1,11 +1,8 @@
 'use strict';
 
 const xcode = require('appium-xcode');
-// const fs = require('fs');
 const path = require('path');
 const log = require('fancy-log');
-// const asyncUtil = require('async');
-// const rimraf = require('rimraf');
 const { exec } = require('teen_process');
 const { fs } = require('appium-support');
 const { asyncify } = require('asyncbox');
