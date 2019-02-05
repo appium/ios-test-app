@@ -1,32 +1,31 @@
 'use strict';
 
-var xcode = require('appium-xcode').default,
-    fs = require('fs'),
-    path = require('path'),
-    log = require('fancy-log'),
-    asyncUtil = require('async'),
-    rimraf = require('rimraf'),
-    exec = require('child_process').exec;
+const xcode = require('appium-xcode');
+const path = require('path');
+const log = require('fancy-log');
+const { exec } = require('teen_process');
+const { fs } = require('appium-support');
+const { asyncify } = require('asyncbox');
 
 
-var rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
+const rootDir = process.env.NO_PRECOMPILE ? path.resolve(__dirname) : path.resolve(__dirname, '..');
 
-var relative = {
+const relative = {
   iphoneos: 'build/Release-iphoneos/TestApp-iphoneos.app',
   iphonesimulator: 'build/Release-iphonesimulator/TestApp-iphonesimulator.app'
 };
 
-var absolute = {
+const absolute = {
   iphoneos: path.resolve(rootDir, 'build', 'Release-iphoneos', 'TestApp-iphoneos.app'),
   iphonesimulator: path.resolve(rootDir, 'build', 'Release-iphonesimulator', 'TestApp-iphonesimulator.app')
 };
 
-var appList = [
+const appList = [
   relative.iphoneos,
   relative.iphonesimulator
 ];
 
-var SDKS = {
+const SDKS = {
   iphonesimulator: {
     name: 'iphonesimulator',
     buildPath: path.resolve('build', 'Release-iphonesimulator', 'TestApp.app'),
@@ -39,113 +38,101 @@ var SDKS = {
   }
 };
 
+const apps = [
+  SDKS.iphonesimulator.buildPath,
+  SDKS.iphonesimulator.finalPath,
+  SDKS.iphoneos.buildPath,
+  SDKS.iphoneos.finalPath,
+];
+
 // the sdks against which we will build
-var sdks = ['iphonesimulator'];
+let sdks = ['iphonesimulator'];
 if (process.env.IOS_REAL_DEVICE || process.env.REAL_DEVICE) {
   sdks.push('iphoneos');
 }
 
-var MAX_BUFFER_SIZE = 524288;
+const MAX_BUFFER_SIZE = 524288;
 
-function cleanApp (appRoot, sdk, done) {
-  log('cleaning app for ' + sdk);
-  var cmd = 'xcodebuild -sdk ' + sdk + ' clean';
-  exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
-    if (err) {
-      log("Failed cleaning app: " + err);
-      log(stderr);
-      done(err);
-    } else {
-      log('finished cleaning app for ' + sdk);
-      done();
-    }
-  });
+async function getIOSSDK () {
+  try {
+    return await xcode.getMaxIOSSDK();
+  } catch (err) {
+    log(`Unable to get max iOS SDK: ${err.message}`);
+    throw err;
+  }
 }
 
-function cleanAll (done) {
-  log("cleaning apps");
-  xcode.getMaxIOSSDK()
-    .catch(function (err) {
-      log("Unable to get max iOS SDK:", err.message);
-    })
-    .then(function (sdkVer) {
-      asyncUtil.eachSeries(sdks, function (sdk, cb) {
-        cleanApp('.', sdk + sdkVer, cb);
-      }, function (err) {
-        if (err) return done(err);
-        asyncUtil.eachSeries([
-          SDKS.iphonesimulator.buildPath,
-          SDKS.iphonesimulator.finalPath,
-          SDKS.iphoneos.buildPath,
-          SDKS.iphoneos.finalPath
-        ], rimraf, function (err) {
-          if (err) return done(err);
-          log("finished cleaning apps");
-          done();
-        });
-      });
-    });
+async function cleanApp (appRoot, sdk) {
+  log(`Cleaning app for ${sdk} at app root '${appRoot}'`);
+  try {
+    const cmd = 'xcodebuild';
+    const args = ['-sdk', sdk, 'clean'];
+    await exec(cmd, args, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE});
+    log(`Finished cleaning app for ${sdk}`);
+  } catch (err) {
+    log(`Failed cleaning app: ${err.message}`);
+    throw err;
+  }
 }
 
-function buildApp (appRoot, sdk, done) {
-  log('building app for ' + sdk);
-  var cmd = 'xcodebuild -sdk ' + sdk;
-  exec(cmd, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE}, function (err, stdout, stderr) {
-    if (err) {
-      log("Failed building app");
-      log(stderr);
-      done(err);
-    } else {
-      log('finished building app for ' + sdk);
-      done();
-    }
-  });
+async function cleanAll () {
+  log('Cleaning all apps');
+  const sdkVer = await getIOSSDK();
+
+  for (const sdk of sdks) {
+    await cleanApp('.', sdk + sdkVer);
+  }
+
+  // delete all the apps
+  for (const app of apps) {
+    await fs.rimraf(app);
+  }
+  log('Finished cleaning apps');
 }
 
-function buildAll (done) {
-  log('building apps');
-  xcode.getMaxIOSSDK()
-    .then(function (sdkVer) {
-      asyncUtil.eachSeries(sdks, function (sdk, cb) {
-        buildApp('.', sdk + sdkVer, cb);
-      }, function (err) {
-        if (err) return done(err);
-        log('finished building apps');
-        done();
-      });
-    });
- }
+async function buildApp (appRoot, sdk) {
+  log(`Building app for ${sdk} at app root '${appRoot}'`);
+  try {
+    const cmd = 'xcodebuild';
+    const args = ['-sdk', sdk];
+    await exec(cmd, args, {cwd: appRoot, maxBuffer: MAX_BUFFER_SIZE});
+  } catch (err) {
+    log(`Failed building app: ${err.message}`);
+    throw err;
+  }
 
-function renameAll (done) {
-  log('renaming apps');
-  asyncUtil.eachSeries(sdks, function (sdk, cb) {
-    log('renaming for ' + sdk);
-    fs.rename(SDKS[sdk].buildPath, SDKS[sdk].finalPath, cb);
-  }, function (err) {
-    if (err) return done(err);
-    log('finished renaming apps');
-    done();
-  });
+  log(`Finished building app for ${sdk}`);
 }
 
-exports.install = function install (done) {
-  asyncUtil.series([
-    cleanAll,
-    buildAll,
-    renameAll,
-    function () {
-      if (typeof done === 'function') {
-        done();
-      }
-    }
-  ]);
+async function buildAll () {
+  log('Building all apps');
+  const sdkVer = await getIOSSDK();
+  for (const sdk of sdks) {
+    await buildApp('.', sdk + sdkVer);
+  }
+
+  log('Finished building apps');
+}
+
+async function renameAll () {
+  log('Renaming apps');
+  for (const sdk of sdks) {
+    log(`Renaming for ${sdk}`);
+    await fs.rename(SDKS[sdk].buildPath, SDKS[sdk].finalPath);
+  }
+  log('Finished renaming apps');
+}
+
+exports.install = async function install () {
+  await cleanAll();
+  await buildAll();
+  await renameAll();
+  log('Finished installing');
 };
 
-exports.installRealDevice = function installRealDevice (done) {
+exports.installRealDevice = async function installRealDevice () {
   sdks = ['iphoneos'];
-  exports.install(function () {
-    done(SDKS.iphoneos.finalPath);
-  });
+  await exports.install();
 };
 
 exports.relative = relative;
@@ -153,7 +140,5 @@ exports.absolute = absolute;
 exports.appList = appList;
 
 if (require.main === module) {
-  exports.install(function () {
-    console.log('finished installing');
-  });
+  asyncify(exports.install);
 }

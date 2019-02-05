@@ -2,7 +2,7 @@
 
 // transpile:main
 
-import install from './lib/install';
+import install from './install-npm';
 import { asyncify } from 'asyncbox';
 
 
