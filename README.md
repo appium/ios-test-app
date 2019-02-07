@@ -6,27 +6,16 @@ A simple test application for iOS, used by [Appium](https://github.com/appium/ap
 
 ### Building
 
-`npm install` will build the app for a simulator. If you want also to build for a real device, set the environment variable `IOS_REAL_DEVICE` or `REAL_DEVICE` to a truthy value.
+`npm install` will build the app for a simulator. If you want also to build for
+a real device, set the environment variable `IOS_REAL_DEVICE` or `REAL_DEVICE`
+to a truthy value.
 
 ```
 REAL_DEVICE=1 npm install
 ```
 
-To build the application for simulator and real device without using `npm`, use
-
-```
-gulp transpile
-REAL_DEVICE=1 node build-js/install.js
-```
-
-Finally, to install from within a node application (or as part of a build), use the
-exported `installRealDevice` function
-
-```js
-import { installRealDevice } from 'ios-test-app';
-
-let appPath = await installRealDevice();
-```
+If any special build information is needed, the `XCCONFIG_FILE` environment
+variable can be set to the path to an `xcconfig` file.
 
 ## Watch
 
