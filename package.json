@@ -30,7 +30,6 @@
   "files": [
     "gulpfile.js",
     "index.js",
-    "build-js",
     "lib",
     "Test App 2",
     "TestApp.xcodeproj"
@@ -41,7 +40,6 @@
   },
   "scripts": {
     "clean": "rm -rf node_modules && rm -f package-lock.json && npm install",
-    "prepare": "gulp prepublish",
     "build": "gulp ios-apps:install",
     "install": "gulp ios-apps:install",
     "test": "gulp once",
