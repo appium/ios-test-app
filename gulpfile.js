@@ -2,11 +2,18 @@
 
 const gulp = require('gulp');
 const boilerplate = require('appium-gulp-plugins').boilerplate.use(gulp);
-const install = require('./install-npm').install;
+const { relative } = require('.');
+
 
 boilerplate({
-  transpileOut: 'build-js',
-  build: 'ios-test-app'
+  build: 'ios-test-app',
+  projectRoot: __dirname,
+  transpile: false,
+  iosApps: {
+    relativeLocations: {
+      iphoneos: relative.iphoneos,
+      iphonesimulator: relative.iphonesimulator,
+    },
+    appName: 'TestApp.app',
+  },
 });
-
-gulp.task('install-app', install);
