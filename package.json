@@ -28,6 +28,7 @@
     "lib": "lib"
   },
   "files": [
+    "Default-568h@2x.png",
     "gulpfile.js",
     "index.js",
     "lib",
