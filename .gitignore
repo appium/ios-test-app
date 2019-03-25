@@ -4,3 +4,4 @@ build-js
 *.log
 .DS_Store
 xcuserdata
+package-lock.json*
