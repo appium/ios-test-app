@@ -1,0 +1,21 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: macOS-10.15
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: "12.x"
+- script: sudo xcode-select --switch "/Applications/Xcode_11.6.app/Contents/Developer"
+- script: npm install
+  displayName: Xcode 11.6
+- script: sudo xcode-select --switch "/Applications/Xcode_12.4.app/Contents/Developer"
+- script: npm install
+  displayName: Xcode 12.4
