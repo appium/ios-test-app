@@ -16,9 +16,9 @@
   "bugs": {
     "url": "https://github.com/appium/ios-test-app/issues"
   },
-  "engines": [
-    "node"
-  ],
+  "engines": {
+    "node": ">=12"
+  },
   "os": [
     "darwin"
   ],
@@ -36,7 +36,6 @@
     "TestApp.xcodeproj"
   ],
   "dependencies": {
-    "appium-gulp-plugins": "^5.0.0",
     "gulp": "^4.0.0"
   },
   "scripts": {
@@ -55,7 +54,8 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "eslint-config-appium": "^4.0.1",
+    "@appium/eslint-config-appium": "^4.7.0",
+    "@appium/gulp-plugins": "^5.5.0",
     "pre-commit": "^1.2.2"
   }
 }
