@@ -1,0 +1,39 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: ios
+workflows:
+  test:
+    description: Build and test the project
+    steps:
+    - git-clone@6: {}
+    - cache-pull@2: {}
+    - yarn@0:
+        inputs:
+        - command: install
+    - recreate-user-schemes@1:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+    - xcode-build-for-test@1:
+        inputs:
+        - project_path: "$BITRISE_PROJECT_PATH"
+        - scheme: "$BITRISE_SCHEME"
+        - destination: platform=iOS Simulator,name=iPhone 13,OS=15.5
+    - cache-push@2: {}
+    - deploy-to-bitrise-io@2: {}
+meta:
+  bitrise.io:
+    stack: osx-xcode-13.2.x
+    machine_type_id: g2.4core
+app:
+  envs:
+  - opts:
+      is_expand: false
+    BITRISE_PROJECT_PATH: TestApp.xcodeproj
+  - opts:
+      is_expand: false
+    BITRISE_SCHEME: TestApp
+  - opts:
+      is_expand: false
+    BITRISE_DISTRIBUTION_METHOD: development
+
