@@ -56,7 +56,11 @@
   "devDependencies": {
     "@appium/eslint-config-appium": "^6.0.0",
     "@appium/gulp-plugins": "^7.0.0",
+    "dotenv": "^16.0.1",
     "eslint-config-prettier": "^8.5.0",
-    "pre-commit": "^1.2.2"
+    "happo-e2e": "^1.2.0",
+    "happo.io": "^7.2.1",
+    "pre-commit": "^1.2.2",
+    "webdriverio": "^7.20.1"
   }
 }
