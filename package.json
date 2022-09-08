@@ -54,7 +54,7 @@
     "precommit-test"
   ],
   "devDependencies": {
-    "@appium/eslint-config-appium": "^6.0.0",
+    "@appium/eslint-config-appium": "^7.0.0",
     "@appium/gulp-plugins": "^7.0.0",
     "eslint-config-prettier": "^8.5.0",
     "pre-commit": "^1.2.2"
