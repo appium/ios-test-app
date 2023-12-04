@@ -56,7 +56,7 @@
   "devDependencies": {
     "@appium/eslint-config-appium": "^8.0.0",
     "@appium/gulp-plugins": "^8.0.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-prettier": "^9.1.0",
     "pre-commit": "^1.2.2"
   }
 }
